@@ -59,12 +59,12 @@ namespace FSO.Common.Rendering.Framework
 
             if (hasFocus)
             {
-                State.MouseState = Input.GetMouseButton(0);
+                State.isMouse = Input.GetMouseButton(0);
               
             }
             else
             {
-                State.MouseState = Input.GetMouseButton(1);
+                State.isMouse = Input.GetMouseButton(1);
                 
             }
 

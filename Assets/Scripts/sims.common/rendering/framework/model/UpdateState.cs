@@ -19,9 +19,12 @@ namespace FSO.Common.Rendering.Framework.Model
     /// </summary>
     public class UpdateState
     {
-        public bool MouseState;
+        public Vector2 MouseState;
+        public bool isMouse;
         public Time Time;
-
+        public IKeyboardEvent KeyboardEvent;
+        public IKeyboardEvent PreviousKeyboard;
+        public InputManager InputManager;
        public UIState UIState = new UIState();
 
         public bool TouchMode;
@@ -30,7 +33,7 @@ namespace FSO.Common.Rendering.Framework.Model
 
         /** A Place to keep shared variables, clears every update cycle **/
         public Dictionary<string, object> SharedData = new Dictionary<string, object>();
-        public List<MouseDownEvent> MouseEvents = new List<MouseDownEvent>();
+        public List<UIMouseEventRef> MouseEvents = new List<UIMouseEventRef>();
 
         private Dictionary<KeyDownEvent, long> KeyDownTime = new Dictionary<KeyDownEvent, long>();
         private List<KeyCode> KeyInRepeatMode = new List<KeyCode>();
@@ -49,6 +52,7 @@ namespace FSO.Common.Rendering.Framework.Model
              */
 
             var now = Time;
+            
             string[] allKeyNames = Enum.GetNames(typeof(KeyCode));
             KeyCode[] allKeyCodes = (KeyCode[])Enum.GetValues(typeof(KeyCode));
 
