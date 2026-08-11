@@ -3,14 +3,13 @@ using FSO.Client.UI.Framework;
 using FSO.Client.UI.Screens;
 using FSO.Client.Utils;
 using FSO.SimAntics.NetPlay.Model.Commands;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FSO.Vitaboy;
 using FSO.SimAntics;
+using UnityEngine;
 
 namespace FSO.Client.UI.Panels
 
@@ -356,7 +355,7 @@ namespace FSO.Client.UI.Panels
                     lbl.Y -= 5;
                     if (x.ID != 606.ToString())
                     {
-                        lbl.Alignment = TextAlignment.Right;
+                        lbl.Alignment = Framework.TextAlignment.Right;
                     }
                 }
                 x.X -= 8;
@@ -445,7 +444,7 @@ namespace FSO.Client.UI.Panels
 
            
             Redraw();
-            Size = BackgroundExpandedImage.Size.ToVector2();
+            Size = new Vector2(BackgroundExpandedImage.Size.X, BackgroundExpandedImage.Size.Y);
         }
 
         private void ModButton_OnButtonClick(UIElement button)
@@ -610,7 +609,7 @@ namespace FSO.Client.UI.Panels
         private void ResizeNameLabel()
         {
             var style = NameText.CaptionStyle;
-            var width = style.MeasureString(NameText.Caption).X;
+            var width = style.MeasureString(NameText.Caption).x;
             var backgroundWidth = width + 40.0f;
             backgroundWidth = Math.Max(backgroundWidth, 106);
 
@@ -619,7 +618,7 @@ namespace FSO.Client.UI.Panels
             //var textX = BackgroundNameImage.X + ((BackgroundNameImage.Width / 2.0f) - (width / 2.0f));
 
             NameText.Size = new Vector2(BackgroundNameImage.Width, BackgroundNameImage.Height);
-            NameText.Position = new Vector2(BackgroundNameImage.Position.X, 0);
+            NameText.Position = new Vector2(BackgroundNameImage.Position.x, 0);
         }
 
         void RelationshipsTabButton_OnButtonClick(UIElement button)

@@ -10,17 +10,13 @@ using System.Linq;
 using System.Text;
 using FSO.Client.UI.Framework;
 using FSO.Client.UI.Controls;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using FSO.Common.Rendering.Framework.Model;
 using FSO.SimAntics;
 using FSO.Files.Formats.IFF.Chunks;
-using TSO.HIT;
 using FSO.Client.UI.Model;
-using FSO.LotView;
-using FSO.LotView.Components;
 using FSO.SimAntics.Model.TSOPlatform;
 using FSO.Common;
+using UnityEngine;
 
 namespace FSO.Client.UI.Panels
 {

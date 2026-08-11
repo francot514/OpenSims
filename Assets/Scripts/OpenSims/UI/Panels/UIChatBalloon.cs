@@ -1,12 +1,11 @@
 ﻿using FSO.Client.UI.Framework;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FSO.Common.Rendering.Framework.Model;
 using FSO.Client.UI.Controls;
+using UnityEngine;
 
 namespace FSO.Client.UI.Panels
 {
@@ -35,10 +34,10 @@ namespace FSO.Client.UI.Panels
 
         public Vector2 TargetLocation;
 
-        public Rectangle DisplayRect;
+        public Rect DisplayRect;
         public Vector2 TargetPt;
 
-        public Point DesiredRectPos;
+        public Vector2 DesiredRectPos;
         private bool Offscreen;
         public int ClosestDir = 3; //left, up, right, down, N/A
 
@@ -65,7 +64,7 @@ namespace FSO.Client.UI.Panels
             BodyTextStyle.Color = new Color(240, 240, 48);
 
             ShadowStyle = BodyTextStyle.Clone();
-            ShadowStyle.Color = Color.Black;
+            ShadowStyle.Color = Color.black;
         }
 
         public void SetNameMessage(string name, string message)
@@ -84,9 +83,9 @@ namespace FSO.Client.UI.Panels
             var textW = Math.Max(130, Message.Length/2);
             BodyTextLabels = TextRenderer.ComputeText(BodyText, new TextRendererOptions
             {
-                Alignment = TextAlignment.Center,
+                Alignment = Framework.TextAlignment.Center,
                 MaxWidth = textW,
-                Position = new Microsoft.Xna.Framework.Vector2(18, 18),
+                Position = new Vector2(18, 18),
                 Scale = _Scale,
                 TextStyle = BodyTextStyle,
                 WordWrap = true,
@@ -99,19 +98,20 @@ namespace FSO.Client.UI.Panels
                 if (cmd is TextDrawCmd_Text) BTOffsets.Add(((TextDrawCmd_Text)cmd).Position);
             }
 
-            DisplayRect.Width = textW + 18 * 2;
-            DisplayRect.Height = BodyTextLabels.BoundingBox.Height + 18 * 2;
+            DisplayRect.width = textW + 18 * 2;
+            DisplayRect.height = BodyTextLabels.BoundingBox.Height + 18 * 2;
         }
 
         private void AlphaCopy(Texture2D tex)
         {
-            var data = new Color[tex.Width * tex.Height];
-            tex.GetData<Color>(data);
+            var data = new Color[tex.width * tex.height];
+            tex.GetPixelData<Color>(data.Length);
             for (int i = 0; i < data.Length; i++)
             {
-                data[i].A = data[i].R;
+                data[i].a = data[i].r;
             }
-            tex.SetData<Color>(data);
+            tex.SetPixelData<Color>(data, 1,0);
+            
         }
 
         public override void Update(UpdateState state)
@@ -120,34 +120,34 @@ namespace FSO.Client.UI.Panels
 
             UpdateDesiredPosition();
 
-            DisplayRect.Location = DesiredRectPos;
+            DisplayRect.position = DesiredRectPos;
 
             DeterminePointSide();
         }
 
         public void UpdateDesiredPosition()
         {
-            DesiredRectPos = new Point((int)(TargetPt.X - DisplayRect.Width / 2), (int)(TargetPt.Y - (DisplayRect.Height + 20)));
-            var dr = new Rectangle(DesiredRectPos.X, DesiredRectPos.Y, DisplayRect.Width, DisplayRect.Height); 
+            DesiredRectPos = new Vector2((int)(TargetPt.x - DisplayRect.width / 2), (int)(TargetPt.y - (DisplayRect.height + 20)));
+            var dr = new Rect(DesiredRectPos.x, DesiredRectPos.y, DisplayRect.width, DisplayRect.height); 
 
             bool changed = false;
             foreach (var area in Owner.InvalidAreas)
             {
-                if (dr.Intersects(area))
+                if (dr.Overlaps(area))
                 {
                     //move desired rectangle out of area
                     //first determine problem direction
-                    var xDist = (area.X + area.Width / 2) - (dr.X + dr.Width / 2);
-                    var yDist = (area.Y + area.Height / 2) - (dr.Y + dr.Height / 2);
+                    var xDist = (area.X + area.Width / 2) - (dr.x + dr.width / 2);
+                    var yDist = (area.Y + area.Height / 2) - (dr.y + dr.height / 2);
 
                     if (Math.Abs(xDist) > Math.Abs(yDist))
                     {
-                        if (xDist < 0) dr.X = area.Right;
-                        else dr.X = area.Left-dr.Width;
+                        if (xDist < 0) dr.x = area.Right;
+                        else dr.x = area.Left-dr.width;
                     } else
                     {
-                        if (yDist < 0) dr.Y = area.Bottom;
-                        else dr.Y = area.Top-dr.Height;
+                        if (yDist < 0) dr.y = area.Bottom;
+                        else dr.y = area.Top-dr.height;
                     }
                     changed = true;
                 }
@@ -170,16 +170,16 @@ namespace FSO.Client.UI.Panels
                 }
             }
 
-            DesiredRectPos = dr.Location;
+            DesiredRectPos = dr.position;
         }
 
         public void DeterminePointSide()
         {
-            float xDist = TargetPt.X - (DisplayRect.X + DisplayRect.Width / 2);
-            float ax = (Math.Abs(xDist) - DisplayRect.Width / 2);
+            float xDist = TargetPt.x - (DisplayRect.x + DisplayRect.width / 2);
+            float ax = (Math.Abs(xDist) - DisplayRect.width / 2);
 
-            float yDist = TargetPt.Y - (DisplayRect.Y + DisplayRect.Height / 2);
-            float ay = (Math.Abs(yDist) - DisplayRect.Height / 2);
+            float yDist = TargetPt.y - (DisplayRect.y + DisplayRect.height / 2);
+            float ay = (Math.Abs(yDist) - DisplayRect.height / 2);
 
             if (ax < 30 && ay < 30)
             {
@@ -189,7 +189,7 @@ namespace FSO.Client.UI.Panels
             if (ax > ay)
             {
                 //x pointer
-                if (DisplayRect.Height < 80) ClosestDir = 4; //cannot fit horizontal arrow
+                if (DisplayRect.height < 80) ClosestDir = 4; //cannot fit horizontal arrow
                 else if (xDist < 0) ClosestDir = 0; //left
                 else ClosestDir = 2; //right
             }
@@ -208,67 +208,67 @@ namespace FSO.Client.UI.Panels
             Color bgCol = new Color(8,8,128) * Alpha;
             
             //draw corners
-            DrawLocalTexture(batch, BTiles, new Rectangle(0, 0, 40, 40), new Vector2(DisplayRect.Left-20, DisplayRect.Top-20), Vector2.One, bgCol);
-            DrawLocalTexture(batch, BTiles, new Rectangle(40, 0, 40, 40), new Vector2(DisplayRect.Right + 20, DisplayRect.Top - 20), new Vector2(-1,1), bgCol);
-            DrawLocalTexture(batch, BTiles, new Rectangle(80, 0, 40, 40), new Vector2(DisplayRect.Right + 20, DisplayRect.Bottom + 20), new Vector2(-1, -1), bgCol);
-            DrawLocalTexture(batch, BTiles, new Rectangle(120, 0, 40, 40), new Vector2(DisplayRect.Left - 20, DisplayRect.Bottom + 20), new Vector2(1, -1), bgCol);
+            DrawLocalTexture(batch, BTiles, new Rect(0, 0, 40, 40), new Vector2(DisplayRect.left-20, DisplayRect.top-20), Vector2.one, bgCol);
+            DrawLocalTexture(batch, BTiles, new Rect(40, 0, 40, 40), new Vector2(DisplayRect.right + 20, DisplayRect.top - 20), new Vector2(-1,1), bgCol);
+            DrawLocalTexture(batch, BTiles, new Rect(80, 0, 40, 40), new Vector2(DisplayRect.right + 20, DisplayRect.bottom + 20), new Vector2(-1, -1), bgCol);
+            DrawLocalTexture(batch, BTiles, new Rect(120, 0, 40, 40), new Vector2(DisplayRect.left - 20, DisplayRect.bottom + 20), new Vector2(1, -1), bgCol);
 
             //draw edges
             //if the pointer is on this edge, it needs to be split into 3... Before point, point and after point. 
 
-            var vertH = DisplayRect.Height - 40;
-            var vertPt = Math.Max(DisplayRect.Top + 20, Math.Min(DisplayRect.Bottom - 60, TargetPt.Y-20)) - (DisplayRect.Top + 20);
+            var vertH = DisplayRect.height - 40;
+            var vertPt = Math.Max(DisplayRect.top + 20, Math.Min(DisplayRect.bottom - 60, TargetPt.y-20)) - (DisplayRect.top + 20);
 
-            var horizW = DisplayRect.Width - 40;
-            var horizPt = Math.Max(DisplayRect.Left + 20, Math.Min(DisplayRect.Right - 60, TargetPt.X-20)) - (DisplayRect.Left + 20);
+            var horizW = DisplayRect.width - 40;
+            var horizPt = Math.Max(DisplayRect.left + 20, Math.Min(DisplayRect.right - 60, TargetPt.x -20)) - (DisplayRect.left + 20);
 
             int ptSel = 0;
 
             //left
             if (ClosestDir == 0)
             {
-                ptSel = Math.Max(0, Math.Min(3, (int)Math.Floor((DisplayRect.Left - TargetPt.X) / 40f)));
-                DrawLocalTexture(batch, BTiles, new Rectangle(0, 40, 40, 40), new Vector2(DisplayRect.Left - 20, DisplayRect.Top + 20), new Vector2(1, vertPt / 40f), bgCol);
-                DrawLocalTexture(batch, BPointerSide, new Rectangle(0, ptSel * 40, 200, 40), new Vector2(DisplayRect.Left - 180, DisplayRect.Top + 20 + vertPt), Vector2.One, bgCol);
-                DrawLocalTexture(batch, BTiles, new Rectangle(0, 40, 40, 40), new Vector2(DisplayRect.Left - 20, DisplayRect.Top + 60 + vertPt), new Vector2(1, (vertH-(vertPt+40)) / 40f), bgCol);
+                ptSel = Math.Max(0, Math.Min(3, (int)Math.Floor((DisplayRect.left - TargetPt.x) / 40f)));
+                DrawLocalTexture(batch, BTiles, new Rect(0, 40, 40, 40), new Vector2(DisplayRect.left - 20, DisplayRect.top + 20), new Vector2(1, vertPt / 40f), bgCol);
+                DrawLocalTexture(batch, BPointerSide, new Rect(0, ptSel * 40, 200, 40), new Vector2(DisplayRect.left - 180, DisplayRect.top + 20 + vertPt), Vector2.one, bgCol);
+                DrawLocalTexture(batch, BTiles, new Rect(0, 40, 40, 40), new Vector2(DisplayRect.left - 20, DisplayRect.top + 60 + vertPt), new Vector2(1, (vertH-(vertPt+40)) / 40f), bgCol);
             }
-            else DrawLocalTexture(batch, BTiles, new Rectangle(0, 40, 40, 40), new Vector2(DisplayRect.Left - 20, DisplayRect.Top + 20), new Vector2(1, (DisplayRect.Height-40)/40f), bgCol);
+            else DrawLocalTexture(batch, BTiles, new Rect(0, 40, 40, 40), new Vector2(DisplayRect.left - 20, DisplayRect.top + 20), new Vector2(1, (DisplayRect.height-40)/40f), bgCol);
 
             //top
             if (ClosestDir == 1)
             {
-                ptSel = Math.Max(0, Math.Min(3, (int)Math.Floor((DisplayRect.Top - TargetPt.Y) / 40f)));
-                DrawLocalTexture(batch, BTiles, new Rectangle(0, 80, 40, 40), new Vector2(DisplayRect.Left + 20, DisplayRect.Top - 20), new Vector2(horizPt / 40f, 1), bgCol);
-                DrawLocalTexture(batch, BPointerBottom, new Rectangle(ptSel * 40, 0, 40, 200), new Vector2(DisplayRect.Left + 20 + horizPt, DisplayRect.Top + 20), new Vector2(1, -1), bgCol);
-                DrawLocalTexture(batch, BTiles, new Rectangle(0, 80, 40, 40), new Vector2(DisplayRect.Left + 60 + horizPt, DisplayRect.Top - 20), new Vector2(((horizW - (horizPt + 40)) / 40f), 1), bgCol);
+                ptSel = Math.Max(0, Math.Min(3, (int)Math.Floor((DisplayRect.top - TargetPt.y) / 40f)));
+                DrawLocalTexture(batch, BTiles, new Rect(0, 80, 40, 40), new Vector2(DisplayRect.left + 20, DisplayRect.top - 20), new Vector2(horizPt / 40f, 1), bgCol);
+                DrawLocalTexture(batch, BPointerBottom, new Rect(ptSel * 40, 0, 40, 200), new Vector2(DisplayRect.left + 20 + horizPt, DisplayRect.top + 20), new Vector2(1, -1), bgCol);
+                DrawLocalTexture(batch, BTiles, new Rect(0, 80, 40, 40), new Vector2(DisplayRect.left + 60 + horizPt, DisplayRect.top - 20), new Vector2(((horizW - (horizPt + 40)) / 40f), 1), bgCol);
             }
-            else DrawLocalTexture(batch, BTiles, new Rectangle(0, 80, 40, 40), new Vector2(DisplayRect.Left + 20, DisplayRect.Top - 20), new Vector2((DisplayRect.Width - 40) / 40f, 1), bgCol);
+            else DrawLocalTexture(batch, BTiles, new Rect(0, 80, 40, 40), new Vector2(DisplayRect.left + 20, DisplayRect.top - 20), new Vector2((DisplayRect.width - 40) / 40f, 1), bgCol);
 
             //right
             if (ClosestDir == 2)
             {
-                ptSel = Math.Max(0, Math.Min(3, (int)Math.Floor((TargetPt.X - DisplayRect.Right) / 40f)));
-                DrawLocalTexture(batch, BTiles, new Rectangle(0, 40, 40, 40), new Vector2(DisplayRect.Right + 20, DisplayRect.Top + 20), new Vector2(-1, vertPt / 40f), bgCol);
-                DrawLocalTexture(batch, BPointerSide, new Rectangle(0, ptSel * 40, 200, 40), new Vector2(DisplayRect.Right + 180, DisplayRect.Top + 20 + vertPt), new Vector2(-1, 1), bgCol);
-                DrawLocalTexture(batch, BTiles, new Rectangle(0, 40, 40, 40), new Vector2(DisplayRect.Right + 20, DisplayRect.Top + 60 + vertPt), new Vector2(-1, (vertH - (vertPt + 40)) / 40f), bgCol);
+                ptSel = Math.Max(0, Math.Min(3, (int)Math.Floor((TargetPt.x - DisplayRect.right) / 40f)));
+                DrawLocalTexture(batch, BTiles, new Rect(0, 40, 40, 40), new Vector2(DisplayRect.right + 20, DisplayRect.top + 20), new Vector2(-1, vertPt / 40f), bgCol);
+                DrawLocalTexture(batch, BPointerSide, new Rect(0, ptSel * 40, 200, 40), new Vector2(DisplayRect.right + 180, DisplayRect.top + 20 + vertPt), new Vector2(-1, 1), bgCol);
+                DrawLocalTexture(batch, BTiles, new Rect(0, 40, 40, 40), new Vector2(DisplayRect.right + 20, DisplayRect.top + 60 + vertPt), new Vector2(-1, (vertH - (vertPt + 40)) / 40f), bgCol);
             }
-            else DrawLocalTexture(batch, BTiles, new Rectangle(0, 40, 40, 40), new Vector2(DisplayRect.Right + 20, DisplayRect.Top + 20), new Vector2(-1, (DisplayRect.Height - 40) / 40f), bgCol);
+            else DrawLocalTexture(batch, BTiles, new Rect(0, 40, 40, 40), new Vector2(DisplayRect.right + 20, DisplayRect.top + 20), new Vector2(-1, (DisplayRect.height - 40) / 40f), bgCol);
 
             //bottom
             if (ClosestDir == 3)
             {
-                ptSel = Math.Max(0, Math.Min(3, (int)Math.Floor((TargetPt.Y - DisplayRect.Bottom) / 40f)));
-                DrawLocalTexture(batch, BTiles, new Rectangle(0, 120, 40, 40), new Vector2(DisplayRect.Left + 20, DisplayRect.Bottom - 20), new Vector2(horizPt / 40f, 1), bgCol);
-                DrawLocalTexture(batch, BPointerBottom, new Rectangle(ptSel * 40, 0, 40, 200), new Vector2(DisplayRect.Left + 20 + horizPt, DisplayRect.Bottom - 20), Vector2.One, bgCol);
-                DrawLocalTexture(batch, BTiles, new Rectangle(0, 120, 40, 40), new Vector2(DisplayRect.Left + 60 + horizPt, DisplayRect.Bottom - 20), new Vector2(((horizW - (horizPt + 40)) / 40f), 1), bgCol);
+                ptSel = Math.Max(0, Math.Min(3, (int)Math.Floor((TargetPt.y - DisplayRect.bottom) / 40f)));
+                DrawLocalTexture(batch, BTiles, new Rect(0, 120, 40, 40), new Vector2(DisplayRect.left + 20, DisplayRect.bottom - 20), new Vector2(horizPt / 40f, 1), bgCol);
+                DrawLocalTexture(batch, BPointerBottom, new Rect(ptSel * 40, 0, 40, 200), new Vector2(DisplayRect.left + 20 + horizPt, DisplayRect.bottom - 20), Vector2.one, bgCol);
+                DrawLocalTexture(batch, BTiles, new Rect(0, 120, 40, 40), new Vector2(DisplayRect.left + 60 + horizPt, DisplayRect.bottom - 20), new Vector2(((horizW - (horizPt + 40)) / 40f), 1), bgCol);
             }
-            else DrawLocalTexture(batch, BTiles, new Rectangle(0, 120, 40, 40), new Vector2(DisplayRect.Left + 20, DisplayRect.Bottom - 20), new Vector2((DisplayRect.Width - 40) / 40f, 1), bgCol);
+            else DrawLocalTexture(batch, BTiles, new Rect(0, 120, 40, 40), new Vector2(DisplayRect.left + 20, DisplayRect.bottom - 20), new Vector2((DisplayRect.width - 40) / 40f, 1), bgCol);
 
             //draw middle
-            DrawLocalTexture(batch, BTiles, new Rectangle(40, 120, 1, 1), new Vector2(DisplayRect.Left + 20, DisplayRect.Top + 20), new Vector2(DisplayRect.Width-40, DisplayRect.Height-40), bgCol);
+            DrawLocalTexture(batch, BTiles, new Rect(40, 120, 1, 1), new Vector2(DisplayRect.left + 20, DisplayRect.top + 20), new Vector2(DisplayRect.width-40, DisplayRect.height-40), bgCol);
 
 
-            Vector2 offpos = new Vector2(DisplayRect.X + 1, DisplayRect.Y + 1);
+            Vector2 offpos = new Vector2(DisplayRect.x + 1, DisplayRect.y + 1);
             int posi = 0;
             foreach (var cmd in BodyTextLabels.DrawingCommands)
             {
@@ -279,11 +279,11 @@ namespace FSO.Client.UI.Panels
                 }
             }
 
-            ShadowStyle.Color = Color.Black * Alpha;
+            ShadowStyle.Color = Color.black * Alpha;
             TextRenderer.DrawText(BodyTextLabels.DrawingCommands, this, batch);
 
             posi = 0;
-            offpos = new Vector2(DisplayRect.X, DisplayRect.Y);
+            offpos = new Vector2(DisplayRect.x, DisplayRect.y);
             foreach (var cmd in BodyTextLabels.DrawingCommands)
             {
                 if (cmd is TextDrawCmd_Text) {
