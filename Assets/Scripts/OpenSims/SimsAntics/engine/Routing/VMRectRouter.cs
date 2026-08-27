@@ -5,11 +5,11 @@
  */
 
 using FSO.SimAntics.Model.Routing;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace FSO.SimAntics.Engine.Routing
 {
@@ -22,11 +22,11 @@ namespace FSO.SimAntics.Engine.Routing
             Map = map;
         }
 
-        public LinkedList<Point> Route(Point from, Point to)
+        public LinkedList<Vector2> Route(Vector2 from, Vector2 to)
         {
             var openSet = new List<VMWalkableRect>();
 
-            var startRect = new VMWalkableRect(from.X, from.Y, from.X, from.Y);
+            var startRect = new VMWalkableRect((int)from.x, (int)from.y, (int)from.x, (int)from.y);
             ConstructFirstFree(startRect);
 
             startRect.Start = true;
@@ -42,10 +42,10 @@ namespace FSO.SimAntics.Engine.Routing
 
                 if (current.Contains(to))
                 {
-                    var result = new LinkedList<Point>();
+                    var result = new LinkedList<Vector2>();
                     result.AddFirst(to);
                     if (!to.Equals(current.ParentSource)) result.AddFirst(current.ParentSource);
-                    Point last = current.ParentSource;
+                    Vector2 last = current.ParentSource;
                     while (current != startRect)
                     {
                         current = current.Parent;
@@ -70,7 +70,7 @@ namespace FSO.SimAntics.Engine.Routing
 
                     var parentPt = RectIntersect(r, current, current.ParentSource);
                     var originalG = current.OriginalG + PointDist(current.ParentSource, parentPt);
-                    var closest = r.Closest(to.X, to.Y);
+                    var closest = r.Closest((int)to.x, (int)to.y);
                     var newGScore = originalG + PointDist(parentPt, closest);
 
                     if (newcomer || newGScore < r.GScore)
@@ -97,10 +97,10 @@ namespace FSO.SimAntics.Engine.Routing
             return null; //failed
         }
 
-        private int PointDist(Point pt1, Point pt2)
+        private int PointDist(Vector2 pt1, Vector2 pt2)
         {
-            Point diff = pt1 - pt2;
-            return (int)Math.Sqrt(diff.X * diff.X + diff.Y * diff.Y);
+            Vector2 diff = pt1 - pt2;
+            return (int)Math.Sqrt(diff.x * diff.x + diff.y * diff.y);
         }
 
         private void OpenSetSortedInsert(List<VMWalkableRect> set, VMWalkableRect item)
@@ -117,7 +117,7 @@ namespace FSO.SimAntics.Engine.Routing
         }
 
 
-        private Point RectIntersect(VMObstacle r1, VMObstacle r2, Point destPoint)
+        private Vector2 RectIntersect(VMObstacle r1, VMObstacle r2, Vector2 destPoint)
         {
             bool vert = true;
             int d1, d2, p=0;
@@ -130,12 +130,12 @@ namespace FSO.SimAntics.Engine.Routing
             if (vert)
             {
                 d1 = Math.Max(r1.x1, r2.x1); d2 = Math.Min(r1.x2, r2.x2);
-                return new Point(Math.Max(d1, Math.Min(d2, destPoint.X)), p);
+                return new Vector2(Math.Max(d1, Math.Min(d2, destPoint.x)), p);
             }
             else
             {
                 d1 = Math.Max(r1.y1, r2.y1); d2 = Math.Min(r1.y2, r2.y2);
-                return new Point(p, Math.Max(d1, Math.Min(d2, destPoint.Y)));
+                return new Vector2(p, Math.Max(d1, Math.Min(d2, destPoint.y)));
             }
         }
 

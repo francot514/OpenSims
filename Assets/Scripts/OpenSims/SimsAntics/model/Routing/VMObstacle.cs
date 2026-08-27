@@ -4,11 +4,11 @@
  * http://mozilla.org/MPL/2.0/. 
  */
 
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace FSO.SimAntics.Model.Routing
 {
@@ -30,19 +30,19 @@ namespace FSO.SimAntics.Model.Routing
             this.y2 = y2;
         }
 
-        public bool Contains(Point pt)
+        public bool Contains(Vector2 pt)
         {
-            return (pt.X >= x1 && pt.X <= x2) && (pt.Y >= y1 && pt.Y <= y2);
+            return (pt.x >= x1 && pt.x <= x2) && (pt.y >= y1 && pt.y <= y2);
         }
 
-        public bool HardContains(Point pt)
+        public bool HardContains(Vector2 pt)
         {
-            return (pt.X > x1 && pt.X < x2) && (pt.Y > y1 && pt.Y < y2);
+            return (pt.x > x1 && pt.x < x2) && (pt.y > y1 && pt.y < y2);
         }
 
-        public Point Closest(int x, int y)
+        public Vector2 Closest(int x, int y)
         {
-            return new Point(Math.Max(Math.Min(x2, x), x1), Math.Max(Math.Min(y2, y), y1));
+            return new Vector2(Math.Max(Math.Min(x2, x), x1), Math.Max(Math.Min(y2, y), y1));
         }
 
         public bool Intersects(VMObstacle other)

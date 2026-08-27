@@ -4,11 +4,12 @@
  * http://mozilla.org/MPL/2.0/. 
  */
 
-using Microsoft.Xna.Framework;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace FSO.SimAntics.Model.Routing
 {
@@ -19,7 +20,7 @@ namespace FSO.SimAntics.Model.Routing
 
         //used directly for routing
         public VMWalkableRect Parent;
-        public Point ParentSource;
+        public Vector2 ParentSource;
         public int OriginalG;
         public int FScore;
         public int GScore;
