@@ -7,8 +7,6 @@ http://mozilla.org/MPL/2.0/.
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using FSO.Client.UI.Framework;
 using FSO.Client.UI.Framework.Parser;
 using FSO.Client.UI.Model;
@@ -20,6 +18,7 @@ using FSO.SimAntics;
 using TSO.HIT;
 using FSO.SimAntics.NetPlay.Model.Commands;
 using FSO.Client.UI.Controls;
+using UnityEngine;
 
 namespace FSO.Client.UI.Panels
 {
@@ -122,7 +121,7 @@ namespace FSO.Client.UI.Panels
                         var itemui = new UIIQTrackEntry() {
                             Interaction = elem,
                             IconOwner = elem.IconOwner,
-                            SourcePos = (PieMenuClickPos.X < 0)?(new Vector2(30 + position * 50, 30)):PieMenuClickPos,
+                            SourcePos = (PieMenuClickPos.x < 0)?(new Vector2(30 + position * 50, 30)):PieMenuClickPos,
                             TweenProgress = 0,
                             UI = new UIInteraction(i==0),
                             Active = (i == 0)
@@ -207,7 +206,7 @@ namespace FSO.Client.UI.Panels
 
         public void UpdateInteractionIcon()
         {
-            UI.Icon = IconOwner.GetIcon(GameFacade.GraphicsDevice, 0);
+            UI.Icon = IconOwner.GetIcon(Renderer, 0);
         }
     }
 }

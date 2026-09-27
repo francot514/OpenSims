@@ -227,23 +227,23 @@ namespace FSO.Client.UI.Panels
             //init general tab specific backgrounds
 
             DescriptionBackgroundImage = new UIImage(ImageDescriptionBackground);
-            DescriptionBackgroundImage.Position = new Microsoft.Xna.Framework.Vector2(119, 7);
+            DescriptionBackgroundImage.Position = new Vector2(119, 7);
             this.AddAt(3, DescriptionBackgroundImage);
 
             MotivesBackgroundImage = new UIImage(ImageMotivesBackground);
-            MotivesBackgroundImage.Position = new Microsoft.Xna.Framework.Vector2(useSmall ? 395:619, 7);
+            MotivesBackgroundImage.Position = new Vector2(useSmall ? 395:619, 7);
             this.AddAt(3, MotivesBackgroundImage);
 
             GeneralTabImage = new UIImage(ImageGeneralTab);
-            GeneralTabImage.Position = new Microsoft.Xna.Framework.Vector2(useSmall ? 563 : 787, 0);
+            GeneralTabImage.Position = new Vector2(useSmall ? 563 : 787, 0);
             this.AddAt(3, GeneralTabImage);
 
             SpecificTabImage = new UIImage(ImageSpecificTab);
-            SpecificTabImage.Position = new Microsoft.Xna.Framework.Vector2(useSmall ? 563 : 787, 0);
+            SpecificTabImage.Position = new Vector2(useSmall ? 563 : 787, 0);
             this.AddAt(3, SpecificTabImage);
 
             OwnerPriceBack = new UIImage(GeneralOwnerPriceBack);
-            OwnerPriceBack.Position = new Microsoft.Xna.Framework.Vector2(useSmall ? 501 : 725, 80);
+            OwnerPriceBack.Position = new Vector2(useSmall ? 501 : 725, 80);
             this.AddAt(3, OwnerPriceBack);
 
             Thumbnail = new UIImage();
@@ -388,12 +388,12 @@ namespace FSO.Client.UI.Panels
                     objComps[i] = (ObjectComponent)objects[i].WorldUI;
                 }
                 var thumb = World.GetObjectThumb(objComps, entity.MultitileGroup.GetBasePositions(), GameFacade.GraphicsDevice);
-                if (Thumbnail.Texture != null) Thumbnail.Texture.Dispose();
+                //if (Thumbnail.Texture != null) Thumbnail.Texture.
                 Thumbnail.Texture = thumb;
                 UpdateImagePosition();
             } else
             {
-                if (Thumbnail.Texture != null) Thumbnail.Texture.Dispose();
+                //if (Thumbnail.Texture != null) Thumbnail.Texture.Dispose();
                 Thumbnail.Texture = null;
             }
         }
@@ -409,7 +409,7 @@ namespace FSO.Client.UI.Panels
 
             SpecificTabButton.Disabled = true;
 
-            if (Thumbnail.Texture != null) Thumbnail.Texture.Dispose();
+            if (Thumbnail.Texture != null) //Thumbnail.Texture.Dispose();
             Thumbnail.Texture = thumb;
             UpdateImagePosition();
         }
@@ -417,10 +417,10 @@ namespace FSO.Client.UI.Panels
         private void UpdateImagePosition() {
             var thumb = Thumbnail.Texture;
             if (thumb == null) return;
-            float scale = Math.Min(1, 90f / Math.Max(thumb.Height, thumb.Width));
-            Thumbnail.SetSize(thumb.Width * scale, thumb.Height * scale);
+            float scale = Math.Min(1, 90f / Math.Max(thumb.height, thumb.width));
+            Thumbnail.SetSize(thumb.width * scale, thumb.height * scale);
             var baseLoc = (Tab == 0) ? new Vector2(24, 11) : new Vector2(64, 11);
-            Thumbnail.Position = baseLoc + new Vector2(45 - (thumb.Width * scale / 2), 45 - (thumb.Height * scale / 2));
+            Thumbnail.Position = baseLoc + new Vector2(45 - (thumb.width * scale / 2), 45 - (thumb.height * scale / 2));
         }
     }
     

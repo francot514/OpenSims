@@ -5,8 +5,6 @@ using FSO.LotView;
 using FSO.SimAntics;
 using FSO.SimAntics.Model;
 using FSO.SimAntics.Primitives;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -8,13 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework.Graphics;
 using FSO.Client.UI.Controls;
 using FSO.Client.UI.Framework;
 using FSO.Client.UI.Model;
 using FSO.Client.UI.Screens;
 using FSO.Client.Utils;
 using FSO.Client.UI.Framework.Parser;
+using UnityEngine;
 
 namespace FSO.Client.UI.Panels
 {
@@ -124,22 +124,16 @@ namespace FSO.Client.UI.Panels
             if (open)
             {
                 Background.Texture = backgroundCollapsedImage;
-                Background.SetSize(backgroundCollapsedImage.Width, backgroundCollapsedImage.Height);
+                Background.SetSize(backgroundCollapsedImage.width, backgroundCollapsedImage.height);
                 MenuListBox.Items.Clear();
             }
             else
             {
                 Background.Texture = backgroundExpandedImage;
-                Background.SetSize(backgroundExpandedImage.Width, backgroundExpandedImage.Height);
+                Background.SetSize(backgroundExpandedImage.width, backgroundExpandedImage.height);
                 UIListBoxTextStyle Style = Script.Create<UIListBoxTextStyle>("SimMessageColors", MenuListBox.FontStyle);
 
-                //TODO: This should eventually be made to show only a player's friends.
-                foreach (UISim Avatar in Network.NetworkFacade.AvatarsInSession)
-                {
-                    UIListBoxItem AvatarItem = new UIListBoxItem(Avatar.GUID, Avatar.Name);
-                    AvatarItem.CustomStyle = Style;
-                    MenuListBox.Items.Add(AvatarItem);
-                }
+                
             }
 
             open = !open;
